@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 const allowedDir = "./safe-files"
@@ -20,7 +21,7 @@ func main() {
 func readFileHandler(w http.ResponseWriter, r *http.Request) {
 	filename := r.URL.Query().Get("file")
 
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		http.Error(w, "File not found", 404)
 		return
