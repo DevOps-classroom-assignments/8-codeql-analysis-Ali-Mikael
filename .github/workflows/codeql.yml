@@ -43,6 +43,9 @@ jobs:
 
   docker:
     name: Docker Build & Run
+    permissions:
+      content: read
+      pull_request: write
     runs-on: ubuntu-latest
     needs: analyze
 
