@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
+	"strings"
 )
 
 const allowedDir = "./safe-files"
@@ -18,10 +20,18 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
-func readFileHandler(w http.ResponseWriter, r *http.Request) {
-	filename := r.URL.Query().Get("file")
+const safeDir = "/app/safe-files"
 
-	data, err := os.ReadFile(filename)
+func readFileHandler(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("file")
+
+	absPath, err := filepath.Abs(filepath.Join(safeDir, path))
+	if err != nil || !strings.HasPrefix(absPath, safeDir) {
+		http.Error(w, "Invalid file name", http.StatusBadRequest)
+		return
+	}
+
+	data, err := os.ReadFile(absPath)
 	if err != nil {
 		http.Error(w, "File not found", 404)
 		return
