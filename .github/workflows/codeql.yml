@@ -25,21 +25,21 @@ jobs:
         - language: go
           build-mode: autobuild
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-          # Initialize codeQL
-        - name: Initialize CodeQL
-          uses: github/codeql-action/init@v4
-          with:
-            languages: ${{ matrix.language }}
-            build-mode: ${{ matrix.build-mode }}
+        # Initialize codeQL
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
 
-        - name: CodeQL Analysis
-          uses: github/codeql-action/analyze@v4
-          with:
-            category: "/language:${{matrix.language}}"
+      - name: CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"
 
   docker:
     name: Docker Build & Run
