@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -39,13 +38,24 @@ func readFileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+var allowedCmd = map[string][]string{
+	"uptime": {"uptime"},
+}
+
 func execHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := r.URL.Query().Get("cmd")
 
-	out, err := exec.Command("sh", "-c", cmd).Output()
+	command, ok := allowedCmd[cmd]
+	if !ok {
+		http.Error(w, "Command not allowed", http.StatusForbidden)
+		return
+	}
+
+	out, err := exec.Command(command[0], command[1:]...).Output()
 	if err != nil {
 		http.Error(w, "Command failed", 500)
 		return
 	}
+
 	w.Write(out)
 }
